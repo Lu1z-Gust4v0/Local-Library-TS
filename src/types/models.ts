@@ -13,19 +13,19 @@ export interface IBook {
     author: Id
     summary: string
     isbn: string 
-    genre: Id[]    
+    genre?: Id[]    
 }
 
 export interface IBookInstance {
     book: Id
     inprint: string
     status: BookStatus
-    dueBack: Date
+    dueBack?: Date
 }
 
 export interface IAuthor {
     firstName: string
     familyName: string
-    dateOfBirth: Date
+    dateOfBirth?: Date
     dateOfDeath?: Date
 }

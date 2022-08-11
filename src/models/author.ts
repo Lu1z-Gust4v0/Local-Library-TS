@@ -3,10 +3,10 @@ import { IAuthor } from "../types/models"
 
 
 const authorSchema = new Schema<IAuthor>({
-    firstName: { Type: String, required: true, maxLength: 100 },
-    familyName: { Type: String, required: true, maxLength: 100 },
-    dateOfBirth: {type: Date, required: true },
-    dateOfDeath: {type: Date }
+    firstName: { type: String, required: true, maxLength: 100 },
+    familyName: { type: String, required: true, maxLength: 100 },
+    dateOfBirth: { type: Date },
+    dateOfDeath: { type: Date }
 }) 
 
 // Virtuals 
@@ -20,14 +20,7 @@ authorSchema.virtual("name").get(function () {
 })
 
 authorSchema.virtual("lifespan").get(function () {
-    let lifetime = ""   
-    if (this.dateOfDeath) {
-        lifetime = `${this.dateOfBirth.getFullYear()} - ${this.dateOfDeath.getFullYear()}`
-    }
-    if (!this.dateOfDeath) {
-        lifetime = `${this.dateOfBirth.getFullYear()} - `
-    }
-    return lifetime
+    return `${this.dateOfBirth?.getFullYear()} - ${this.dateOfDeath?.getFullYear()}`
 })
 
 authorSchema.virtual("url").get(function () {
