@@ -12,7 +12,7 @@ export interface IBook {
     title: string
     author: Id
     summary: string
-    ISBN: string 
+    isbn: string 
     genre: Id[]    
 }
 
