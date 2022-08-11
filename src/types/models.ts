@@ -2,6 +2,8 @@ import { Types } from "mongoose"
 
 type Id = Types.ObjectId
 
+type BookStatus = "Available" | "Maintenance" | "Loaned" | "Reserved"
+
 export interface IGenre {
     name: string    
 }
@@ -17,7 +19,7 @@ export interface IBook {
 export interface IBookInstance {
     book: Id
     inprint: string
-    status: string
+    status: BookStatus
     dueBack: Date
 }
 
