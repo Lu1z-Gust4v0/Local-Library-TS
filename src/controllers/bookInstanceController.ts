@@ -1,9 +1,27 @@
-import { Request, Response } from "express"
+import { Request, Response, NextFunction } from "express"
+import BookInstance from "../models/bookInstance"
 
 
 // Display list of all BookInstances 
-export const bookInstanceList = async (req: Request, res: Response): Promise<void> => {
-    res.send("NOT IMPLEMENTED: BookInstance list")
+export const bookInstanceList = async (
+    req: Request, 
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const bookInstances = await BookInstance
+          .find()
+          .populate("book")
+          .exec()
+        
+        res.render("bookInstanceList", { 
+            title: "Book Instance List", 
+            bookInstanceList: bookInstances
+        })
+    
+    } catch(error: any) {
+        return next(error)
+    }
 }
 
 // Display detail page for a specific BookInstance
