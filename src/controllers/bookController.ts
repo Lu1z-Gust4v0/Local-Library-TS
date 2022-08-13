@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import { Request, Response, NextFunction } from "express"
 import Book from "../models/book"
 import BookInstance from "../models/bookInstance"
 import Author from "../models/author"
@@ -28,8 +28,23 @@ export const index = async (req: Request, res: Response): Promise<void> => {
 }
 
 // Display list of all books.
-export const bookList = async (req: Request, res: Response): Promise<void> => {
-  res.send('NOT IMPLEMENTED: Book list')
+export const bookList = async (
+  req: Request, 
+  res: Response, 
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const books = await Book
+      .find({}, "title author")
+      .populate("author")
+      .sort({ title: 1 })
+      .exec()
+    
+    res.render("bookList", { title: "Book List", bookList: books})
+
+  } catch(error: any) {
+    return next(error)
+  }
 }
 
 // Display detail page for a specific book.
