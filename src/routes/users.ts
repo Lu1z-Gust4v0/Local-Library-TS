@@ -7,4 +7,4 @@ router.get('/', (req, res) => {
   res.send('respond with a resource');
 });
 
-export { router as userRoutes } 
+export { router as usersRoutes } 

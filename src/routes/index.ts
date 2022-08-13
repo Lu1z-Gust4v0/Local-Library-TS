@@ -3,8 +3,8 @@ import { Router } from "express"
 
 const router: Router = Router()
 
-router.get('/', (req, res, next) => {
-  res.render('index', { title: 'Express' });
+router.get('/', (req, res) => {
+  res.redirect("/catalog")
 });
 
 export { router as indexRoutes }

@@ -118,4 +118,4 @@ router.get("/bookinstance/:id", bookInstanceController.bookInstanceDetail)
 // GET request for list of all BookInstance.
 router.get("/bookinstances", bookInstanceController.bookInstanceList)
 
-export { router as catalogRouter }
+export { router as catalogRoutes }

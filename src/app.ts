@@ -1,9 +1,10 @@
-import express, { Express, Request, Response } from "express"
+import express, { Express } from "express"
 import cookieParser from "cookie-parser"
 import { connect } from "mongoose"
 import path from "path"
 import { indexRoutes } from "./routes"
-import { userRoutes } from "./routes/user"
+import { usersRoutes } from "./routes/users"
+import { catalogRoutes } from "./routes/catalog"
 
 const app: Express = express()
 const PORT: number = 3000
@@ -23,7 +24,8 @@ app.use(express.static(path.join(__dirname, "../../", "public")))
 
 // routes
 app.use("/", indexRoutes)
-app.use("/user", userRoutes)
+app.use("/users", usersRoutes)
+app.use("/catalog", catalogRoutes)
 
 connect(uri).then(() => {
     app.listen(PORT, () => {
