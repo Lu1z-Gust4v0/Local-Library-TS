@@ -14,7 +14,7 @@ block content
         else
           span.text-warning #{instance.status}
         if instance.status != "Available"
-          span  (Due: #{instance.dueBack} )
+          span  (Due: #{instance.formattedDueBack})
 
         //- p #{instance}
 
