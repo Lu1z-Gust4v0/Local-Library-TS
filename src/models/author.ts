@@ -20,7 +20,7 @@ authorSchema.virtual("name").get(function () {
 })
 
 authorSchema.virtual("lifespan").get(function () {
-    return `${this.dateOfBirth?.getFullYear()} - ${this.dateOfDeath?.getFullYear()}`
+    return `${this.dateOfBirth?.getFullYear() ?? ""} - ${this.dateOfDeath?.getFullYear() ?? ""}`
 })
 
 authorSchema.virtual("url").get(function () {
