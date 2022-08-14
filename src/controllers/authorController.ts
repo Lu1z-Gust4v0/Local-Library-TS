@@ -1,9 +1,22 @@
-import { Request, Response } from "express"
+import { Request, Response, NextFunction } from "express"
+import Author from "../models/author"
 
 
 // Display list of all Authors
-export const authorList = async (req: Request, res: Response): Promise<void> => {
-    res.send("NOT IMPLEMENTED: Author list")
+export const authorList = async (
+    req: Request, 
+    res: Response, 
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const authors = await Author.find()
+          .sort("firstName") // or sort({ firstName: "asc" })
+          .exec()
+
+        res.render("authorList", { title: "Author List", authorList: authors })
+    } catch (error: any) {
+        return next(error)
+    }
 }
 
 // Display detail page for a specific Author 
