@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express"
 import BookInstance from "../models/bookInstance"
+import { IBook } from "../types/models"
 
 
 // Display list of all BookInstances 
@@ -11,8 +12,7 @@ export const bookInstanceList = async (
     try {
         const bookInstances = await BookInstance
           .find()
-          .populate("book")
-          .exec()
+          .populate<{ book: IBook }>("book")
         
         res.render("bookInstanceList", { 
             title: "Book Instance List", 
@@ -25,8 +25,28 @@ export const bookInstanceList = async (
 }
 
 // Display detail page for a specific BookInstance
-export const bookInstanceDetail = async (req: Request, res: Response): Promise<void> => {
-    res.send(`NOT IMPLEMENTED: BookInstance detail: ${req.params.id}`)
+export const bookInstanceDetail = async (
+    req: Request, 
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const bookInstance = await BookInstance
+          .findById(req.params.id)
+          .populate<{ book: IBook }>("book")     
+
+        if (!bookInstance) {
+            const error = new Error("Book copy not found")
+            return next(error)
+        }
+
+        res.render("bookInstanceDetail", {
+            title: `Copy ${bookInstance.book.title}`,
+            bookInstance
+        })
+    } catch (error: any) {
+        next(error)
+    }
 }
 
 // Display BookInstance create form on GET

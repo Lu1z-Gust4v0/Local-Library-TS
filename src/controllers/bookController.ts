@@ -3,6 +3,7 @@ import Book from "../models/book"
 import BookInstance from "../models/bookInstance"
 import Author from "../models/author"
 import Genre from "../models/genre"
+import { IAuthor, IGenre } from "../types/models"
 
 
 export const index = async (req: Request, res: Response): Promise<void> => {
@@ -37,10 +38,14 @@ export const bookList = async (
     const books = await Book
       .find({}, "title author")
       .populate("author")
-      .sort({ title: 1 })
-      .exec()
-    
-    res.render("bookList", { title: "Book List", bookList: books})
+      .sort("title")
+
+    // For some reason mongoose is returning some book objects
+    // with author set to "null" when I use the 'sort()' method.
+    // I will leave it as it is now until I find a solution for this.
+    const filteredBooks = books.filter((book) => book.author !== null)
+
+    res.render("bookList", { title: "Book List", bookList: filteredBooks })
 
   } catch(error: any) {
     return next(error)
@@ -48,8 +53,32 @@ export const bookList = async (
 }
 
 // Display detail page for a specific book.
-export const bookDetail = async (req: Request, res: Response): Promise<void> => {
-  res.send(`NOT IMPLEMENTED: Book detail: ${req.params.id}`)
+export const bookDetail = async (
+  req: Request, 
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const book = await Book.findById(req.params.id)
+      .populate<{ author: IAuthor }>("author")
+      .populate<{ genre: IGenre }>("genre")
+
+    if (!book) {
+      const error = new Error("Book not found")
+      return next(error)
+    }
+    
+    const instances = await BookInstance
+      .find({ book: req.params.id })
+
+    res.render("bookDetail", {
+      title: book.title,
+      book: book,
+      bookInstances: instances
+    })
+  } catch (error: any) {
+    return next(error)
+  }
 }
 
 // Display book create form on GET.
