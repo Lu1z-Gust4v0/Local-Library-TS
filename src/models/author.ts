@@ -1,13 +1,19 @@
-import { Schema, model } from "mongoose"
+import { Schema, model, SchemaOptions } from "mongoose"
 import { IAuthor } from "../types/models"
 
+
+// enable virtuals to be used in populate 
+const options: SchemaOptions = {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+}
 
 const authorSchema = new Schema<IAuthor>({
     firstName: { type: String, required: true, maxLength: 100 },
     familyName: { type: String, required: true, maxLength: 100 },
     dateOfBirth: { type: Date },
     dateOfDeath: { type: Date }
-}) 
+}, options) 
 
 // Virtuals 
 authorSchema.virtual("name").get(function () {
