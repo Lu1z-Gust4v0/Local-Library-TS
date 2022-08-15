@@ -1,9 +1,21 @@
-import { Request, Response } from "express"
-
+import { Request, Response, NextFunction } from "express"
+import Genre from "../models/genre"
 
 // Display list of all Genre.
-export const genreList = async (req: Request, res: Response): Promise<void> => {
-    res.send("NOT IMPLEMENTED: Genre list")
+export const genreList = async (
+  req: Request, 
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const genres = await Genre.find()
+      .sort("name")
+      .exec()
+
+    res.render("genreList", { title: "Genre List", genreList: genres })
+  } catch (error: any) {
+    return next(error)
+  }
 }
 
 // Display detail page for a specific Genre.
