@@ -4,7 +4,7 @@ import { format } from "date-fns"
 
 const bookInstanceSchema = new Schema<IBookInstance>({
     book: { type: Schema.Types.ObjectId, ref: "Book", required: true},
-    inprint: { type: String, required: true },
+    imprint: { type: String, required: true },
     status: { 
         type: String, 
         required: true, 

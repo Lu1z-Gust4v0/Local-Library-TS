@@ -18,7 +18,7 @@ export interface IBook {
 
 export interface IBookInstance {
     book: Id
-    inprint: string
+    imprint: string
     status: BookStatus
     dueBack?: Date
 }
