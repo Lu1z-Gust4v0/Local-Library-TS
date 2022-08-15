@@ -16,7 +16,7 @@ const bookInstanceSchema = new Schema<IBookInstance>({
         type: String, 
         required: true, 
         enum: ["Available", "Maintenance", "Loaned", "Reserved"], 
-        default: "Maintenance" 
+        default: "Maintenance"
     },
     dueBack: { type: Date, default: Date.now }
 })
