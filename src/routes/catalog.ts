@@ -95,27 +95,27 @@ router.get("/genres", genreController.genreList)
 
 // GET request for creating a BookInstance. 
 // NOTE This must come before route that displays BookInstance (uses id).
-router.get("/bookinstance/create", bookInstanceController.bookInstanceCreateGet)
+router.get("/book-instance/create", bookInstanceController.bookInstanceCreateGet)
 
 // POST request for creating BookInstance.
-router.post("/bookinstance/create", bookInstanceController.bookInstanceCreatePost)
+router.post("/book-instance/create", bookInstanceController.bookInstanceCreatePost)
 
 // GET request to delete BookInstance.
-router.get("/bookinstance/:id/delete", bookInstanceController.bookInstanceDeleteGet)
+router.get("/book-instance/:id/delete", bookInstanceController.bookInstanceDeleteGet)
 
 // POST request to delete BookInstance.
-router.post("/bookinstance/:id/delete", bookInstanceController.bookInstanceDeletePost)
+router.post("/book-instance/:id/delete", bookInstanceController.bookInstanceDeletePost)
 
 // GET request to update BookInstance.
-router.get("/bookinstance/:id/update", bookInstanceController.bookInstanceUpdateGet)
+router.get("/book-instance/:id/update", bookInstanceController.bookInstanceUpdateGet)
 
 // POST request to update BookInstance.
-router.post("/bookinstance/:id/update", bookInstanceController.bookInstanceUpdatePost)
+router.post("/book-instance/:id/update", bookInstanceController.bookInstanceUpdatePost)
 
 // GET request for one BookInstance.
-router.get("/bookinstance/:id", bookInstanceController.bookInstanceDetail)
+router.get("/book-instance/:id", bookInstanceController.bookInstanceDetail)
 
 // GET request for list of all BookInstance.
-router.get("/bookinstances", bookInstanceController.bookInstanceList)
+router.get("/book-instances", bookInstanceController.bookInstanceList)
 
 export { router as catalogRoutes }
