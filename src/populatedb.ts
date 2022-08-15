@@ -97,17 +97,17 @@ const populateDB = async () => {
     ]
     const books = await insertModel<IBook>(bookList, Book)
     const bookInstanceList: IBookInstance[] = [
-            { book: books[0]._id, inprint: "London Gollancz, 2014.", status: "Available", },
-            { book: books[1]._id, inprint: "Gollancz, 2011.", status: "Loaned" },
-            { book: books[2]._id, inprint: "Gollancz, 2015.", status: "Available" },
-            { book: books[3]._id, inprint: "New York Tom Doherty Associates, 2016.", status: "Available" },
-            { book: books[3]._id, inprint: "New York Tom Doherty Associates, 2016.", status: "Available" },
-            { book: books[3]._id, inprint: "New York Tom Doherty Associates, 2016.", status: "Available" },
-            { book: books[4]._id, inprint: "New York, NY Tom Doherty Associates, LLC, 2015.", status: "Available" },
-            { book: books[4]._id, inprint: "New York, NY Tom Doherty Associates, LLC, 2015.", status: "Maintenance" },
-            { book: books[4]._id, inprint: "New York, NY Tom Doherty Associates, LLC, 2015.", status: "Loaned" },
-            { book: books[0]._id, inprint: "Imprint XXX2", status: "Available"},
-            { book: books[1]._id, inprint: "Imprint XXX3", status: "Available"},
+            { book: books[0]._id, imprint: "London Gollancz, 2014.", status: "Available", },
+            { book: books[1]._id, imprint: "Gollancz, 2011.", status: "Loaned" },
+            { book: books[2]._id, imprint: "Gollancz, 2015.", status: "Available" },
+            { book: books[3]._id, imprint: "New York Tom Doherty Associates, 2016.", status: "Available" },
+            { book: books[3]._id, imprint: "New York Tom Doherty Associates, 2016.", status: "Available" },
+            { book: books[3]._id, imprint: "New York Tom Doherty Associates, 2016.", status: "Available" },
+            { book: books[4]._id, imprint: "New York, NY Tom Doherty Associates, LLC, 2015.", status: "Available" },
+            { book: books[4]._id, imprint: "New York, NY Tom Doherty Associates, LLC, 2015.", status: "Maintenance" },
+            { book: books[4]._id, imprint: "New York, NY Tom Doherty Associates, LLC, 2015.", status: "Loaned" },
+            { book: books[0]._id, imprint: "Imprint XXX2", status: "Available"},
+            { book: books[1]._id, imprint: "Imprint XXX3", status: "Available"},
     ]
     const instances = await insertModel<IBookInstance>(bookInstanceList, BookInstance)
     
