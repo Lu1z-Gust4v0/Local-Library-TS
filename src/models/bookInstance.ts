@@ -23,7 +23,7 @@ const bookInstanceSchema = new Schema<IBookInstance>({
 
 bookInstanceSchema.virtual("formattedDueBack").get(function () {
     // If dueBack is not defined get a new Date
-    return format(this.dueBack ?? new Date(), "MMM, dd'th' yyyy")
+    return format(this.dueBack ?? new Date(), "MMM dd'th', yyyy")
 })
 
 

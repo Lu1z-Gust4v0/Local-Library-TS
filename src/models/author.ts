@@ -1,6 +1,6 @@
 import { Schema, model, SchemaOptions } from "mongoose"
 import { IAuthor } from "../types/models"
-
+import { format } from "date-fns"
 
 // enable virtuals to be used in populate 
 const options: SchemaOptions = {
@@ -26,7 +26,10 @@ authorSchema.virtual("name").get(function () {
 })
 
 authorSchema.virtual("lifespan").get(function () {
-    return `${this.dateOfBirth?.getFullYear() ?? ""} - ${this.dateOfDeath?.getFullYear() ?? ""}`
+    const birthDate: string = this.dateOfBirth ? format(this.dateOfBirth, "MMM dd'th', yyyy") : ""
+    const deathDate: string = this.dateOfDeath ? format(this.dateOfDeath, "MMM dd'th', yyyy") : ""
+    
+    return `${birthDate} - ${deathDate}`
 })
 
 authorSchema.virtual("url").get(function () {
