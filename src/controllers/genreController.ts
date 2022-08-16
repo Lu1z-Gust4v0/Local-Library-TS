@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express"
+import { body, validationResult } from "express-validator"
 import Genre from "../models/genre"
 import Book from "../models/book"
 
@@ -47,13 +48,49 @@ export const genreDetail = async (
 
 // Display Genre create form on GET.
 export const genreCreateGet = async (req: Request, res: Response): Promise<void> => {
-  res.send("NOT IMPLEMENTED: Genre create GET")
+  res.render("genreForm", { title: "Create Genre"})
 }
 
 // Handle Genre create on POST.
-export const genreCreatePost = async (req: Request, res: Response): Promise<void> => {
-  res.send("NOT IMPLEMENTED: Genre create POST")
-}
+export const genreCreatePost = [
+  // Validate and sanitize the the name field
+  body("name", "Genre name required")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(), 
+  async (
+    req: Request, 
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const errors = validationResult(req)
+      // Create a new Genre
+      const genre = new Genre({ name: req.body.name })
+
+      if (!errors.isEmpty()) {
+        res.render("genreForm", {
+          title: "Create Genre",
+          genre,
+          errors: errors.array()
+        })
+        return 
+      }
+
+      const duplicatedGenre = await Genre.findOne({ name: req.body.name })
+      
+      if (duplicatedGenre) {
+        res.redirect(duplicatedGenre.url)
+      }
+      // Save new genre
+      await genre.save()
+      
+      res.redirect(genre.url)
+    } catch (error: any) {
+      return next(error)
+    }
+  }
+]
 
 // Display Genre delete form on GET.
 export const genreDeleteGet = async (req: Request, res: Response): Promise<void> => {
