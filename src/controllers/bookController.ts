@@ -37,7 +37,7 @@ export const bookList = async (
   try {
     const books = await Book
       .find({}, "title author")
-      .populate("author")
+      .populate<{ author: IAuthor }>("author")
       .sort("title")
 
     // For some reason mongoose is returning some book objects
