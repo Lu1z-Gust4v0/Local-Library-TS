@@ -1,5 +1,5 @@
 import { Schema, model, SchemaOptions } from "mongoose"
-import { IGenre } from "../types/models"
+import { IGenre, GenreModel } from "../types/models"
 
 
 // enable virtuals to be used in populate 
@@ -8,7 +8,7 @@ const options: SchemaOptions = {
     toObject: { virtuals: true }
 }
 
-const genreSchema = new Schema<IGenre>({
+const genreSchema = new Schema<IGenre, GenreModel>({
     name: { 
         type: String, 
         required: true, 
@@ -21,6 +21,6 @@ genreSchema.virtual("url").get(function () {
     return `/catalog/genre/${this._id}`
 })
 
-const Genre = model<IGenre>("Genre", genreSchema)
+const Genre = model<IGenre, GenreModel>("Genre", genreSchema)
 
 export default Genre

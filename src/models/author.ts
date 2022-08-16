@@ -1,5 +1,5 @@
 import { Schema, model, SchemaOptions } from "mongoose"
-import { IAuthor } from "../types/models"
+import { IAuthor, AuthorModel } from "../types/models"
 import { format } from "date-fns"
 
 // enable virtuals to be used in populate 
@@ -8,7 +8,7 @@ const options: SchemaOptions = {
     toObject: { virtuals: true }
 }
 
-const authorSchema = new Schema<IAuthor>({
+const authorSchema = new Schema<IAuthor, AuthorModel>({
     firstName: { type: String, required: true, maxLength: 100 },
     familyName: { type: String, required: true, maxLength: 100 },
     dateOfBirth: { type: Date },
@@ -36,6 +36,6 @@ authorSchema.virtual("url").get(function () {
     return `/catalog/author/${this._id}`
 })
 
-const Author = model<IAuthor>("Author", authorSchema)
+const Author = model<IAuthor, AuthorModel>("Author", authorSchema)
 
 export default Author

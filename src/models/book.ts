@@ -1,5 +1,5 @@
 import { model, Schema, SchemaOptions } from "mongoose"
-import { IBook } from "../types/models"
+import { IBook, BookModel } from "../types/models"
 
 
 // enable virtuals to be used in populate 
@@ -8,7 +8,7 @@ const options: SchemaOptions = {
     toObject: { virtuals: true }
 }
 
-const bookSchema = new Schema<IBook>({
+const bookSchema = new Schema<IBook, BookModel>({
     title: { type: String, required: true },
     author: { type: Schema.Types.ObjectId, ref: "Author", required: true},
     summary: { type: String, required: true},
@@ -20,6 +20,6 @@ bookSchema.virtual("url").get(function () {
     return `/catalog/book/${this._id}`
 })
 
-const Book = model<IBook>("Book", bookSchema)
+const Book = model<IBook, BookModel>("Book", bookSchema)
 
 export default Book

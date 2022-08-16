@@ -1,5 +1,5 @@
 import { Schema, model, SchemaOptions } from "mongoose"
-import { IBookInstance } from "../types/models"
+import { IBookInstance, BookInstanceModel } from "../types/models"
 import { format } from "date-fns"
 
 
@@ -9,7 +9,7 @@ const options: SchemaOptions = {
     toObject: { virtuals: true }
 }
 
-const bookInstanceSchema = new Schema<IBookInstance>({
+const bookInstanceSchema = new Schema<IBookInstance, BookInstanceModel>({
     book: { type: Schema.Types.ObjectId, ref: "Book", required: true},
     imprint: { type: String, required: true },
     status: { 
@@ -31,6 +31,6 @@ bookInstanceSchema.virtual("url").get(function () {
     return `/catalog/book-instance/${this._id}`
 })
 
-const BookInstance = model<IBookInstance>("BookInstance", bookInstanceSchema)
+const BookInstance = model<IBookInstance, BookInstanceModel>("BookInstance", bookInstanceSchema)
 
 export default BookInstance
