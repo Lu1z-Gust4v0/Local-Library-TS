@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express"
-import { body, validationResult } from "express-validator"
+import { validationResult } from "express-validator"
+import { validateCreateGenre } from "../middlewares/validateFields"
 import Genre from "../models/genre"
 import Book from "../models/book"
 
@@ -54,10 +55,7 @@ export const genreCreateGet = async (req: Request, res: Response): Promise<void>
 // Handle Genre create on POST.
 export const genreCreatePost = [
   // Validate and sanitize the the name field
-  body("name", "Genre name required")
-    .trim()
-    .isLength({ min: 1 })
-    .escape(), 
+  ...validateCreateGenre, 
   async (
     req: Request, 
     res: Response,
