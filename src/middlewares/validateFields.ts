@@ -52,3 +52,16 @@ export const validateCreateBook = [
     .escape(),
   body("genre.*").escape(),  
 ]
+
+export const validateCreateBookInstance = [
+  body("book", "Book must be specified").trim().isLength({ min: 1 }).escape(),
+  body("imprint", "Imprint must be specified")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("status").escape(),
+  body("dueBack", "Invalid date")
+    .optional({ checkFalsy: true })
+    .isISO8601()
+    .toDate()
+]

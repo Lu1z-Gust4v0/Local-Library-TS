@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from "express"
+import { validationResult } from "express-validator"
+import { validateCreateBookInstance } from "../middlewares/validateFields"
 import BookInstance from "../models/bookInstance"
-import { IBook } from "../types/models"
+import Book from "../models/book"
+import { IBook, IBookInstance } from "../types/models"
 
 
 // Display list of all BookInstances 
@@ -50,14 +53,59 @@ export const bookInstanceDetail = async (
 }
 
 // Display BookInstance create form on GET
-export const bookInstanceCreateGet = async (req: Request, res: Response): Promise<void> => {
-    res.send("NOT IMPLEMENTED: BookInstance create GET")
+export const bookInstanceCreateGet = async (
+    req: Request, 
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const books = await Book.find({}, "title")
+        
+        res.render("bookInstanceForm", {
+            title: "Create Book Instance",
+            bookList: books
+        })
+    } catch (error: any) {
+        next(error)
+    }
 }
 
 // Handle BookInstance create on POST
-export const bookInstanceCreatePost = async (req: Request, res: Response): Promise<void> => {
-    res.send("NOT IMPLEMENTED: BookInstance create POST")
-}
+export const bookInstanceCreatePost = [
+    ...validateCreateBookInstance,
+    async (
+        req: Request, 
+        res: Response,
+        next: NextFunction
+    ): Promise<void> => {
+        try {
+            const errors = validationResult(req)
+            const data: IBookInstance = req.body
+
+            const bookInstance = new BookInstance(data)
+            
+            if (!errors.isEmpty()) {
+                // There are errors. Render form again with sanitized data
+                // values and erros messages
+                const books = await Book.find({}, "title")
+
+                res.render("bookInstanceForm", {
+                    title: "Create Book Instance",
+                    bookList: books,
+                    selectedBook: bookInstance.book._id,
+                    errors: errors.array(),
+                    bookInstance,
+                })
+                return 
+            }
+            await bookInstance.save()
+            // Sucess. Redirect to the new record
+            res.redirect(bookInstance.url)
+        } catch (error: any) {
+            next(error)
+        }
+    }
+]
 
 // Display BookInstance delete form on GET
 export const bookInstanceDeleteGet = async (req: Request, res: Response): Promise<void> => {
