@@ -72,6 +72,7 @@ export const authorCreatePost = [
             if (!errors.isEmpty()) {
                 res.render("authorForm", {
                     title: "Create Author",
+                    author: data,
                     errors: errors.array()
                 })
                 return 
