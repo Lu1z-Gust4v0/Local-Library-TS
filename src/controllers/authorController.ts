@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from "express"
+import { validationResult } from "express-validator"
+import { validateCreateAuthor } from "../middlewares/validateFields"
 import Author from "../models/author"
 import Book from "../models/book"
+import { IAuthor } from "../types/models"
 
 
 // Display list of all Authors
@@ -49,13 +52,41 @@ export const authorDetail = async (
 
 // Handle Author create on GET
 export const authorCreateGet = async (req: Request, res: Response): Promise<void> => {
-    res.send("NOT IMPLEMENTED: Author create GET")
+    res.render("authorForm", { title: "Create Author" })
 }
 
 // Handle Author create on POST
-export const authorCreatePost = async (req: Request, res: Response): Promise<void> => {
-    res.send("NOT IMPLEMENTED: Author create POST")
-}
+export const authorCreatePost = [
+    // Validate and sanitize fields
+    ...validateCreateAuthor,
+    async (
+        req: Request, 
+        res: Response,
+        next: NextFunction
+    ): Promise<void> => {
+        try {
+            // Extract validation errors
+            const errors = validationResult(req)
+            const data: IAuthor = req.body   
+            
+            if (!errors.isEmpty()) {
+                res.render("authorForm", {
+                    title: "Create Author",
+                    errors: errors.array()
+                })
+                return 
+            }
+            // Create new Author 
+            const author = new Author(data)
+
+            await author.save()
+
+            res.redirect(author.url)
+        } catch (error: any) {
+            next(error)
+        }
+    }
+]
 
 // Display Author delete form on GET
 export const authorDeleteGet = async (req: Request, res: Response): Promise<void> => {

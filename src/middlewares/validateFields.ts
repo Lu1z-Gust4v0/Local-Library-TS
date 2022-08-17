@@ -9,25 +9,25 @@ export const validateCreateGenre = [
 ]
 
 export const validateCreateAuthor = [
-  body("first_name")
+  body("firstName")
     .trim()
     .isLength({ min: 1 })
     .escape()
     .withMessage("First name must be specified.")
     .isAlphanumeric()
     .withMessage("First name has non-alphanumeric characters."),
-  body("family_name")
+  body("familyName")
     .trim()
     .isLength({ min: 1 })
     .escape()
     .withMessage("Family name must be specified.")
     .isAlphanumeric()
     .withMessage("Family name has non-alphanumeric characters."),
-  body("date_of_birth", "Invalid date of birth")
+  body("dateOfBirth", "Invalid date of birth")
     .optional({ checkFalsy: true })
     .isISO8601()
     .toDate(),
-  body("date_of_death", "Invalid date of death")
+  body("dateOfDeath", "Invalid date of death")
     .optional({ checkFalsy: true })
     .isISO8601()
     .toDate(),
