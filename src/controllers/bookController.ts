@@ -1,9 +1,11 @@
-import { Request, Response, NextFunction } from "express"
+import { NextFunction, Request, Response } from "express"
+import { validationResult } from "express-validator"
+import { validateCreateBook } from "../middlewares/validateFields"
+import Author from "../models/author"
 import Book from "../models/book"
 import BookInstance from "../models/bookInstance"
-import Author from "../models/author"
 import Genre from "../models/genre"
-import { IAuthor, IGenre } from "../types/models"
+import { IAuthor, IGenre, IBook } from "../types/models"
 
 
 export const index = async (req: Request, res: Response): Promise<void> => {
@@ -42,7 +44,7 @@ export const bookList = async (
 
     // For some reason mongoose is returning some book objects
     // with author set to "null" when I use the 'sort()' method.
-    // I will leave it as it is now until I find a solution for this.
+    // I will leave it as it is now unti+ I find a solution for this.
     const filteredBooks = books.filter((book) => book.author !== null)
 
     res.render("bookList", { title: "Book List", bookList: filteredBooks })
@@ -82,14 +84,77 @@ export const bookDetail = async (
 }
 
 // Display book create form on GET.
-export const bookCreateGet = async (req: Request, res: Response): Promise<void> => {
-  res.send('NOT IMPLEMENTED: Book create GET')
+export const bookCreateGet = async (
+  req: Request, 
+  res: Response, 
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const genres = await Genre.find()
+    const authors = await Author.find()
+
+    res.render("bookForm", {
+      title: "Create Book",
+      authors: authors,
+      genres: genres
+    })
+  } catch(error: any) {
+    next(error)
+  }
 }
 
 // Handle book create on POST.
-export const bookCreatePost = async (req: Request, res: Response): Promise<void> => {
-  res.send('NOT IMPLEMENTED: Book create POST')
-}
+export const bookCreatePost = [ 
+  // Convert genre to an array
+  (
+    req: Request, 
+    res: Response, 
+    next: NextFunction
+  ) => {
+    if (!Array.isArray(req.body.genre)) {
+      req.body.genre = typeof req.body.genre === "undefined" ? [] : [req.body.genre]
+    }
+    next()
+  }, 
+  ...validateCreateBook,
+  async (
+    req: Request, 
+    res: Response, 
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const errors = validationResult(req)
+      const data: IBook = req.body
+      
+      const book = new Book(data)
+
+      if (!errors.isEmpty) {
+        // There are errors. Render form again with sanitized values/error messages
+        const authors = await Author.find()
+        // In this case, Record<Key, value> allows you to assign new properties to the genre object 
+        const genres: (IGenre & Record<string, any>)[] = await Genre.find() 
+        
+        // Mark our selected genres as checked 
+        for (const genre of genres) {
+          genre.checked = book.genre?.includes(genre._id) 
+        }
+
+        res.render("bookForm", {
+          title: "Create Book",
+          genres: genres,
+          authors: authors,
+          book,
+          errors: errors.array()
+        })
+      } 
+      await book.save()
+
+      res.redirect(book.url)
+    } catch (error: any) {
+      next(error)
+    }
+  }
+]
 
 // Display book delete form on GET.
 export const bookDeleteGet = async (req: Request, res: Response): Promise<void> => {
