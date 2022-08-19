@@ -91,13 +91,51 @@ export const genreCreatePost = [
 ]
 
 // Display Genre delete form on GET.
-export const genreDeleteGet = async (req: Request, res: Response): Promise<void> => {
-  res.send("NOT IMPLEMENTED: Genre delete GET")
+export const genreDeleteGet = async (
+  req: Request, 
+  res: Response, 
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const genre = await Genre.findById(req.params.id)
+    const genreBooks = await Genre.find({ book: req.params.id})
+
+    if (!genre) res.redirect("/catalog/genres")
+
+    res.render("genreDelete", {
+      title: "Genre Delete",
+      genre: genre,
+      genreBooks: genreBooks
+    })
+
+  } catch (error: any) {
+    next(error)
+  }
 }
 
 // Handle Genre delete on POST.
-export const genreDeletePost = async (req: Request, res: Response): Promise<void> => {
-  res.send("NOT IMPLEMENTED: Genre delete POST")
+export const genreDeletePost = async (
+  req: Request, 
+  res: Response, 
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const genre = await Genre.findById(req.params.id)
+    const genreBooks = await Genre.find({ book: req.params.id})
+
+    if (genreBooks.length > 0) {
+      res.render("genreDelete", {
+        title: "Genre Delete",
+        genre: genre,
+        genreBooks: genreBooks
+      })
+    }
+    await Genre.findByIdAndRemove(req.params.id)
+
+    res.redirect("/catalog/genres")
+  } catch (error: any) {
+    next(error)
+  }
 }
 
 // Display Genre update form on GET.
