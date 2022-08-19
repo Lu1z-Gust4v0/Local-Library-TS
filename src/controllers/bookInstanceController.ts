@@ -108,13 +108,40 @@ export const bookInstanceCreatePost = [
 ]
 
 // Display BookInstance delete form on GET
-export const bookInstanceDeleteGet = async (req: Request, res: Response): Promise<void> => {
-    res.send("NOT IMPLEMENTED: BookInstance delete GET")
+export const bookInstanceDeleteGet = async (
+    req: Request, 
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const instance = await BookInstance.findById(req.params.id)
+
+        if (!instance) res.redirect("/catalog/book-instances")
+
+        res.render("bookInstanceDelete", {
+            title: "Delete Book Instance",
+            instance: instance
+        })
+    } catch (error: any) {
+        next(error)
+    }
 }
 
 // Handle BookInstance delete on POST
-export const bookInstanceDeletePost = async (req: Request, res: Response): Promise<void> => {
-    res.send("NOT IMPLEMENTED: BookInstance delete POST")
+export const bookInstanceDeletePost = async (
+    req: Request, 
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const instance = await BookInstance.findById(req.params.id)
+
+        await BookInstance.findByIdAndRemove(req.params.id) 
+
+        res.redirect("/catalog/book-instances")
+    } catch (error: any) {
+        next(error)
+    }
 }
 
 // Display BookInstance update form on GET

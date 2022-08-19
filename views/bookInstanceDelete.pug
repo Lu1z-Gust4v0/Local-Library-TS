@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  h1 #{title}: #{instance._id}
+  
+  if instance.status !== "Available" 
+    p Status: #{instance.status} - Due back: #{instance.formattedDueBack} 
+  else 
+    p Status: #{instance.status}
+
+  p Do you really want to delete this instance?
+
+  form(method="POST" action="")
+    div.form-group
+      input#instanceId.form-control(type="hidden",name="instanceId", required="true", value=instance._id )
+
+    button.btn.btn-primary(type="submit") Delete
