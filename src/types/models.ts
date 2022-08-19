@@ -1,7 +1,7 @@
 import { Types, Model } from "mongoose"
 
 
-type Id = Types.ObjectId
+export type Id = Types.ObjectId
 
 type BookStatus = "Available" | "Maintenance" | "Loaned" | "Reserved"
 

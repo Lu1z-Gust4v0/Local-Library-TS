@@ -5,7 +5,7 @@ import Author from "../models/author"
 import Book from "../models/book"
 import BookInstance from "../models/bookInstance"
 import Genre from "../models/genre"
-import { IAuthor, IGenre, IBook } from "../types/models"
+import { IAuthor, IGenre, IBook, Id } from "../types/models"
 
 
 export const index = async (req: Request, res: Response): Promise<void> => {
@@ -63,7 +63,7 @@ export const bookDetail = async (
   try {
     const book = await Book.findById(req.params.id)
       .populate<{ author: IAuthor }>("author")
-      .populate<{ genre: IGenre }>("genre")
+      .populate<{ genre: IGenre[] }>("genre")
 
     if (!book) {
       const error = new Error("Book not found")
@@ -167,11 +167,112 @@ export const bookDeletePost = async (req: Request, res: Response): Promise<void>
 }
 
 // Display book update form on GET.
-export const bookUpdateGet = async (req: Request, res: Response): Promise<void> => {
-  res.send('NOT IMPLEMENTED: Book update GET')
+export const bookUpdateGet = async (
+  req: Request, 
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const book = await Book.findById(req.params.id)
+      .populate<{ author: IAuthor }>("author")
+      .populate<{ genre: (IGenre & {_id: Id })[] }>("genre")
+    const authors = await Author.find()
+    const genres: (IGenre & Record<string, any>)[] = await Genre.find() 
+
+    if (!book) {
+      const error = new Error("Book not found")
+      return next(error)
+    }
+    
+    // Mark our selected genres as checked 
+    for (const genre of genres) {
+      for (const bookGenre of book.genre) {
+        if (genre._id.toString() === bookGenre._id.toString()) {
+          genre.checked = true
+        }
+      }
+    }
+
+    res.render("bookForm", {
+      title: "Update Book",
+      authors: authors,
+      genres: genres,
+      book: book
+    })    
+  } catch (error: any) {
+    next(error)
+  }
 }
 
 // Handle book update on POST.
-export const bookUpdatePost = async (req: Request, res: Response): Promise<void> => {
-  res.send('NOT IMPLEMENTED: Book update POST')
-}
+export const bookUpdatePost = [
+  // Convert genre to an array
+  (
+    req: Request, 
+    res: Response, 
+    next: NextFunction
+  ) => {
+    if (!Array.isArray(req.body.genre)) {
+      req.body.genre = typeof req.body.genre === "undefined" ? [] : [req.body.genre]
+    }
+    next()
+  },
+  ...validateCreateBook,
+  async (
+    req: Request, 
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      // Extract Errors
+      const errors = validationResult(req)
+      const data: IBook = req.body 
+      // Create new book with sanitized data and old id.
+      const book = new Book({
+        title: data.title,
+        author: data.author,
+        summary: data.summary,
+        isbn: data.isbn,
+        genre: typeof data.genre === "undefined" ? [] : data.genre,
+        _id: req.params.id
+      })
+
+      if(!errors.isEmpty()) {
+        const authors = await Author.find()
+        const genres: (IGenre & Record<string, any>)[] = await Genre.find() 
+
+        if (!book.genre) {
+          book.genre = []
+        }
+        // Mark our selected genres as checked 
+        for (const genre of genres) {
+          for (const bookGenre of book.genre) {
+            if (genre._id.toString() === bookGenre._id.toString()) {
+              genre.checked = true
+            }
+          }
+        }   
+        
+        res.render("bookForm", {
+          title: "Update Book",
+          authors: authors,
+          genres: genres,
+          book,
+          errors: errors.array()
+        })
+        return 
+      }
+
+      // Data from form is valid. Update the record
+      const updatedBook = await Book.findByIdAndUpdate(req.params.id, book)
+
+      if (!updatedBook) {
+        throw new Error("Update failed")
+      }
+
+      res.redirect(updatedBook.url)
+    } catch (error: any) {
+      next(error)
+    }
+  }
+]
