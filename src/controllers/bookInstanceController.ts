@@ -134,8 +134,7 @@ export const bookInstanceDeletePost = async (
     next: NextFunction
 ): Promise<void> => {
     try {
-        const instance = await BookInstance.findById(req.params.id)
-
+        // Delete the instance
         await BookInstance.findByIdAndRemove(req.params.id) 
 
         res.redirect("/catalog/book-instances")
