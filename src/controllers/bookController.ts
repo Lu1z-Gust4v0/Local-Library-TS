@@ -157,13 +157,53 @@ export const bookCreatePost = [
 ]
 
 // Display book delete form on GET.
-export const bookDeleteGet = async (req: Request, res: Response): Promise<void> => {
-  res.send('NOT IMPLEMENTED: Book delete GET')
+export const bookDeleteGet = async (
+  req: Request, 
+  res: Response,
+  next: NextFunction 
+): Promise<void> => {
+  try {
+    const book = await Book.findById(req.params.id)
+    const bookInstances = await BookInstance.find({ book: req.params.id })
+    
+    if (!book) res.redirect("/catalog/books")
+  
+    res.render("bookDelete", {
+      title: "Delete Book",
+      book: book,
+      bookInstances: bookInstances
+    })
+
+  } catch (error: any) {
+    next(error)
+  }
 }
 
 // Handle book delete on POST.
-export const bookDeletePost = async (req: Request, res: Response): Promise<void> => {
-  res.send('NOT IMPLEMENTED: Book delete POST')
+export const bookDeletePost = async (
+  req: Request, 
+  res: Response,
+  next: NextFunction 
+): Promise<void> => {
+  try {
+    const book = await Book.findById(req.params.id)
+    const bookInstances = await BookInstance.find({ book: req.params.id })
+    
+    if (bookInstances.length > 0) {
+      // Book has book instances. Render the same way as GET route
+      res.render("bookDelete", {
+        title: "Delete Book",
+        book: book,
+        bookInstances: bookInstances
+      })
+    } 
+    // Book has no instances. Delete object and redirect to the list of books
+    await Book.findByIdAndRemove(req.params.id)
+
+    res.redirect("/catalog/books")
+  } catch (error: any) {
+    next(error)
+  }
 }
 
 // Display book update form on GET.
