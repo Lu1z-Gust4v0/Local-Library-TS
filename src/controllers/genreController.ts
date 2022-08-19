@@ -98,7 +98,7 @@ export const genreDeleteGet = async (
 ): Promise<void> => {
   try {
     const genre = await Genre.findById(req.params.id)
-    const genreBooks = await Genre.find({ book: req.params.id})
+    const genreBooks = await Book.find({ genre: req.params.id})
 
     if (!genre) res.redirect("/catalog/genres")
 
@@ -121,7 +121,7 @@ export const genreDeletePost = async (
 ): Promise<void> => {
   try {
     const genre = await Genre.findById(req.params.id)
-    const genreBooks = await Genre.find({ book: req.params.id})
+    const genreBooks = await Book.find({ genre: req.params.id})
 
     if (genreBooks.length > 0) {
       res.render("genreDelete", {
