@@ -3,7 +3,7 @@ import { validationResult } from "express-validator"
 import { validateCreateGenre } from "../middlewares/validateFields"
 import Genre from "../models/genre"
 import Book from "../models/book"
-
+import { IGenre } from "../types/models"
 
 // Display list of all Genre.
 export const genreList = async (
@@ -139,12 +139,62 @@ export const genreDeletePost = async (
 }
 
 // Display Genre update form on GET.
-export const genreUpdateGet = async (req: Request, res: Response): Promise<void> => {
-  res.send("NOT IMPLEMENTED: Genre update GET")
+export const genreUpdateGet = async (
+  req: Request, 
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const genre = await Genre.findById(req.params.id) 
+
+    if (!genre) res.redirect("/catalog/genres")
+
+    res.render("genreForm", {
+      title: "Update Genre",
+      genre: genre
+    })
+
+  } catch (error: any) {
+    next(error)
+  }
 }
 
 // Handle Genre update on POST.
-export const genreUpdatePost = async (req: Request, res: Response): Promise<void> => {
-  res.send("NOT IMPLEMENTED: Genre update POST")
-}
+export const genreUpdatePost = [
+  ...validateCreateGenre, 
+  async (
+    req: Request, 
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const errors = validationResult(req)
+      const data: IGenre = req.body
+
+      // Create a new genre with the same Id
+      const genre = new Genre({
+        name: data.name,
+        _id: req.params.id
+      })
+
+      if(!errors.isEmpty()) {
+        res.render("genreForm", {
+          title: "Update Genre",
+          genre: genre,
+          errors: errors.array()
+        })
+      } 
+
+      const updatedGenre = await Genre.findByIdAndUpdate(req.params.id, genre)        
+
+      if (!updatedGenre) {
+        throw new Error("Failed to update genre")
+      }
+
+      res.redirect(updatedGenre.url)
+    } catch (error: any) {
+      next(error)
+    }
+  }
+]  
 
