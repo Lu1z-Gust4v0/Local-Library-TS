@@ -22,10 +22,13 @@ const bookInstanceSchema = new Schema<IBookInstance, BookInstanceModel>({
 })
 
 bookInstanceSchema.virtual("formattedDueBack").get(function () {
-    // If dueBack is not defined get a new Date
-    return format(this.dueBack ?? new Date(), "MMM dd'th', yyyy")
+    // If dueBack is not defined return an empty string
+    return this.dueBack ? format(this.dueBack, "MMM dd'th', yyyy") :  "" 
 })
 
+bookInstanceSchema.virtual("formFormattedDueBack").get(function () {
+    return this.dueBack ? format(this.dueBack, "yyyy-MM-dd") : ""
+})
 
 bookInstanceSchema.virtual("url").get(function () {
     return `/catalog/book-instance/${this._id}`
