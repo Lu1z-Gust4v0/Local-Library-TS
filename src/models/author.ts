@@ -25,6 +25,14 @@ authorSchema.virtual("name").get(function () {
     return fullname
 })
 
+authorSchema.virtual("dateOfBirthFormatted").get(function () {
+    return this.dateOfBirth ? format(this.dateOfBirth, "yyyy-MM-dd") : ""
+})
+
+authorSchema.virtual("dateOfDeathFormatted").get(function () {
+    return this.dateOfDeath ? format(this.dateOfDeath, "yyyy-MM-dd") : ""
+})
+
 authorSchema.virtual("lifespan").get(function () {
     const birthDate: string = this.dateOfBirth ? format(this.dateOfBirth, "MMM dd'th', yyyy") : ""
     const deathDate: string = this.dateOfDeath ? format(this.dateOfDeath, "MMM dd'th', yyyy") : ""
