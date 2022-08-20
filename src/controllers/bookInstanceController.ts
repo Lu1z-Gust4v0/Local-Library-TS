@@ -92,7 +92,7 @@ export const bookInstanceCreatePost = [
                 res.render("bookInstanceForm", {
                     title: "Create Book Instance",
                     bookList: books,
-                    selectedBook: bookInstance.book._id,
+                    selectedBook: bookInstance.book,
                     errors: errors.array(),
                     bookInstance,
                 })
@@ -144,12 +144,74 @@ export const bookInstanceDeletePost = async (
 }
 
 // Display BookInstance update form on GET
-export const bookInstanceUpdateGet = async (req: Request, res: Response): Promise<void> => {
-    res.send("NOT IMPLEMENTED: BookInstance update GET")
+export const bookInstanceUpdateGet = async (
+    req: Request, 
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const bookInstance = await BookInstance.findById(req.params.id)
+        const books = await Book.find({}, "title")
 
+        if (!bookInstance) {
+            res.redirect("/catalog/book-instances")
+            return 
+        }
+
+        res.render("bookInstanceForm", {
+            title: "Update Book Instance",
+            bookList: books,
+            selectedBook: bookInstance.book,
+            bookInstance: bookInstance
+        })
+
+    } catch (error: any) {
+        next(error)
+    }
 }
 
 // Handle BookInstance update on POST
-export const bookInstanceUpdatePost = async (req: Request, res: Response): Promise<void> => {
-    res.send("NOT IMPLEMENTED: BookInstance delete POST")
-}
+export const bookInstanceUpdatePost = [
+    ...validateCreateBookInstance,
+    async (
+        req: Request, 
+        res: Response,
+        next: NextFunction
+    ): Promise<void> => {
+        try {
+            const errors = validationResult(req)
+            const data: IBookInstance = req.body
+            
+            // Create a new instance with the same id
+            const bookInstance = new BookInstance({
+                book: data.book,
+                imprint: data.imprint,
+                status: data.status,
+                dueBack: data.dueBack,
+                _id: req.params.id
+            })
+            
+            if (!errors.isEmpty()) {
+                const books = await Book.find({}, "title")
+
+                res.render("bookInstanceForm", {
+                    title: "Update Book Instance",
+                    bookList: books,
+                    selectedBook: bookInstance.book,
+                    bookInstance: bookInstance,
+                })
+            }
+
+            const updatedInstance = await BookInstance
+              .findByIdAndUpdate(req.params.id, bookInstance)
+
+            if (!updatedInstance) {
+                throw new Error("Failed to update book instance")
+            }
+
+            res.redirect(updatedInstance.url)
+        } catch (error: any) {
+            next(error)
+        }
+    }
+]

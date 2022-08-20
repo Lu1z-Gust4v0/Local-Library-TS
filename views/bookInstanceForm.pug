@@ -16,15 +16,19 @@ block content
       input#imprint.form-control(type="text" placeholder="Publisher and date information" name="imprint" required="true" value=(undefined===bookInstance ? "" : bookInstance.imprint))
     div.form-group
       label(for="dueBack") Date when book available:
-      input#dueBack.form-control(type="date" name="dueBack" value=(undefined===bookInstance ? "" : bookInstance.dueBack))
+      input#dueBack.form-control(type="date" name="dueBack" value=(undefined===bookInstance ? "" : bookInstance.formFormattedDueBack))
 
     div.form-group
       label(for="status") Status:
       select#status.form-control(type="select" placeholder="Select status" name="status" required="true")
-        option(value="Maintenance") Maintenance
-        option(value="Available") Available
-        option(value="Loaned") Loaned
-        option(value="Reserved") Reserved
+        for status in ["Maintenance", "Available", "Loaned", "Reserved"]
+          option(
+            value=status, 
+            selected=(
+              undefined===bookInstance ? false : 
+              bookInstance.status === status ? "selected" : false
+            )
+          ) #{status}
 
     button.btn.btn-primary(type="submit") Submit
 
