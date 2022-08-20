@@ -307,7 +307,7 @@ export const bookUpdatePost = [
       const updatedBook = await Book.findByIdAndUpdate(req.params.id, book)
 
       if (!updatedBook) {
-        throw new Error("Update failed")
+        throw new Error("Update failed book")
       }
 
       res.redirect(updatedBook.url)

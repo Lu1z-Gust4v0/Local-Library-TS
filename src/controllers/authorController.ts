@@ -140,11 +140,64 @@ export const authorDeletePost = async (
 }
 
 // Display Author update form on GET
-export const authorUpdateGet = async (req: Request, res: Response): Promise<void> => {
-    res.send("NOT IMPLEMENTED: Author update GET")
+export const authorUpdateGet = async (
+    req: Request, 
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const author = await Author.findById(req.params.id)
+    
+        if (!author) {
+            const error = new Error("Author not found")
+            return next(error)
+        }
+
+        res.render("authorForm", {
+            title: "Update Author",
+            author: author
+        })
+    } catch (error: any) {
+        next(error)
+    }
 }
 
 // Handle Author update on POST
-export const authorUpdatePost = async (req: Request, res: Response): Promise<void> => {
-    res.send("NOT IMPLEMENTED: Author update POST")
-}
+export const authorUpdatePost = [
+    ...validateCreateAuthor,
+    async (
+        req: Request, 
+        res: Response,
+        next: NextFunction
+    ): Promise<void> => {
+        try {
+            const errors = validationResult(req)
+            const data: IAuthor = req.body
+            const author = new Author({
+                firstName: data.firstName,
+                familyName: data.familyName,
+                dateOfBirth: data.dateOfBirth,
+                dateOfDeath: data.dateOfDeath,
+                _id: req.params.id
+            })
+
+            if (!errors.isEmpty()) {
+                res.render("authorForm", {
+                    title: "Update Author",
+                    author: author,
+                    errors: errors.array()
+                })
+            }
+            // If the data from Form is valid. Update Author
+            const updatedAuthor = await Author.findByIdAndUpdate(req.params.id, author)
+
+            if (!updatedAuthor) {
+                throw new Error("Failed to update author")
+            }
+            
+            res.redirect(updatedAuthor.url)
+        } catch (error: any) {
+            next(error)
+        }
+    }
+]
