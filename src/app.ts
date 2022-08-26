@@ -13,7 +13,7 @@ dotenv.config()
 
 const app: Express = express()
 const PORT: string | number = process.env.PORT || "3000"
-const uri: string = `mongodb+srv://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_DB_PASSWORD}@examplecluster.grc9b6e.mongodb.net/?retryWrites=true&w=majority`
+const uri: string = process.env.MONGO_DB_URI || ""
 
 // view engine setup 
 app.set("views", path.join(__dirname, "../../", "views"))

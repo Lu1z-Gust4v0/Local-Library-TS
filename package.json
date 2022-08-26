@@ -1,6 +1,9 @@
 {
   "name": "local-library-ts",
   "version": "1.0.0",
+  "engines": {
+    "node": "16.14.2"
+  },
   "description": "",
   "main": "src/app.ts",
   "scripts": {
