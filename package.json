@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc",
     "development": "concurrently \"tsc -w\" \"nodemon dist/js/app.js\"",
-    "start": "tsc && node dist/js/app.js"
+    "start": "node dist/js/app.js"
   },
   "keywords": [],
   "author": "",
