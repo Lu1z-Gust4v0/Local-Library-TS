@@ -8,7 +8,8 @@
   "main": "src/app.ts",
   "scripts": {
     "build": "tsc",
-    "start": "concurrently \"tsc -w\" \"nodemon dist/js/app.js\""
+    "development": "concurrently \"tsc -w\" \"nodemon dist/js/app.js\"",
+    "start": "node dist/js/app.js"
   },
   "keywords": [],
   "author": "",
