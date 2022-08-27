@@ -5,7 +5,7 @@
     "node": "16.14.2"
   },
   "description": "",
-  "main": "src/app.ts",
+  "main": "dist/js/app.js",
   "scripts": {
     "build": "tsc",
     "development": "concurrently \"tsc -w\" \"nodemon dist/js/app.js\"",
